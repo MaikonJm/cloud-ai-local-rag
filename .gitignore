@@ -1,0 +1,19 @@
+.env
+storage/
+backups/
+knowledge/
+__pycache__/
+
+# Private test files
+test-documents/
+
+# Local Python artifacts
+*.pyc
+.pytest_cache/
+.venv/
+
+# Logs and temporary files
+*.log
+*.sqlite
+*.sqlite3
+*.db
