@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Syntax check (Python)
+        run: python -m py_compile services/knowledge-api/app/main.py
+
+      - name: Lint (ruff, critical errors only)
+        run: |
+          pip install ruff
+          ruff check services/knowledge-api --select E9,F63,F7,F82
+
+      - name: Validate docker compose file
+        run: |
+          cp .env.example .env
+          docker compose config --quiet
+
+      - name: Build knowledge-api image
+        run: docker build -t cloud-ai/knowledge-api:${{ github.sha }} services/knowledge-api
